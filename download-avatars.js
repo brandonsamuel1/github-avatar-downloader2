@@ -5,6 +5,8 @@ var repoOwner = process.argv[2];
 var repoName = process.argv[3];
 
 function getRepoContributors(repoOwner, repoName, cb) {
+  // Check to see if user inputs are present in command line
+
   if(!repoOwner || !repoName) {
     return cb('Please enter repoOwner and repoName');
   }
@@ -20,12 +22,14 @@ function getRepoContributors(repoOwner, repoName, cb) {
     cb(err, body);
   });
 }
+// Downloading avatars for each user
 
 function downloadImageByURL(url, filePath) {
   request.get(url)
   .pipe(fs.createWriteStream(filePath))
   console.log(url)
 }
+// Function to loop though each user and grab their avatars
 
 getRepoContributors(repoOwner, repoName, function(err, result) {
   if(err) {
@@ -33,9 +37,8 @@ getRepoContributors(repoOwner, repoName, function(err, result) {
     return;
   }
   var contributors = JSON.parse(result);
-  // console.log(contributors);
+
   for (var i = 0; i < contributors.length; i++) {
     downloadImageByURL(contributors[i].avatar_url, `./downloads/${contributors[i].login}.jpg`);
   }
-  // console.log("Result:", result);
 });
